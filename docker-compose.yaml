@@ -1,0 +1,14 @@
+services:
+  settlement:
+    image: settlement
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    networks:
+      - settlement-network
+
+networks:
+  settlement-network:
+    driver: bridge
