@@ -1,11 +1,20 @@
+name: settlement-tunnel
+
 services:
   settlement:
-    image: settlement
-    build:
+    build: # Use build if you are building the image locally
       context: .
       dockerfile: Dockerfile
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    devices:
+      - /dev/net/tun
     env_file:
       - .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .docker/zero-tier:/var/lib/zerotier-one
     networks:
       - settlement-network
 

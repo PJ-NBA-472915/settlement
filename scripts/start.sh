@@ -1,12 +1,12 @@
 #!/bin/sh
-# Start the Docker daemon
-dockerd-entrypoint.sh &
+# Start the Docker service
+service docker start
 
 # Start the SSH server
-/usr/sbin/sshd &
+/usr/sbin/sshd
 
-# Join the ZeroTier network
-/usr/local/bin/join-zerotier.sh
+zerotier-one -d
+zerotier-cli join $ZT_NETWORK_ID
 
 # Wait indefinitely to keep the container running
 tail -f /dev/null

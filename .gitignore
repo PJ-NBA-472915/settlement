@@ -1,3 +1,4 @@
 # Docker secrets
 .env
 !**/.env.example
+.docker
