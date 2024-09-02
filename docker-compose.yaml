@@ -2,9 +2,10 @@ name: settlement-tunnel
 
 services:
   settlement:
-    build: # Use build if you are building the image locally
+    build:
       context: .
       dockerfile: Dockerfile
+    restart: always
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
@@ -12,9 +13,14 @@ services:
       - /dev/net/tun
     env_file:
       - .env
+    ports:
+      - "${SSH_PORT}:${SSH_PORT}"
+      - "2375:2375"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - .docker/zero-tier:/var/lib/zerotier-one
+      - .docker/ssh:/home/admin/.ssh
+      - .docker/etc/ssh:/etc/ssh
     networks:
       - settlement-network
 

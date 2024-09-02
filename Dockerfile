@@ -1,17 +1,24 @@
 # Use the Ubuntu 22.04 image as the base
 FROM ubuntu:22.04
 
+# Define build arguments
 ARG SSH_PORT=22
+ARG SSH_SUBNET=192.168.1.*
+
+# Set environment variables
 ENV SSH_PORT=${SSH_PORT}
+ENV SSH_SUBNET=${SSH_SUBNET}
 
 # Install necessary packages including OpenSSH server, Docker, and ZeroTier
 RUN apt-get update && \
   apt-get install -y \
   openssh-server \
   curl \
+  nano \
   sudo \
   gnupg \
   lsb-release \
+  gettext-base \
   software-properties-common && \
   # Install Docker
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
@@ -39,15 +46,19 @@ RUN mkdir /var/run/sshd && \
   sed -i 's/#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config && \
   ssh-keygen -A
 
-# Expose the SSH port
+# Document the ports being exposed
 EXPOSE ${SSH_PORT}
+EXPOSE 2375
 
-# Start services
+# Copy the template file into the container
+COPY config/sshd/settlement.config.template /etc/ssh/settlement_config.template
+
+# Substitute variables and create the final configuration file
+RUN envsubst < /etc/ssh/settlement_config.template > /etc/ssh/sshd_config.d/settlement.conf
+
+# Copy the start script into the container and make it executable
 COPY scripts/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
-
-# Expose the Docker daemon port
-EXPOSE 2375
 
 # Start the SSH server and ZeroTier
 CMD ["/usr/local/bin/start.sh"]
