@@ -28,13 +28,18 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - .docker/zero-tier:/var/lib/zerotier-one
       - ssh:/home/admin/.ssh
-      - config:/etc/ssh
+      - ${HOME}/git:/home/${SSH_USER}/git
+      - /bin/systemctl:/bin/systemctl
+      - /run/systemd/system:/run/systemd/system
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+      - /sys/fs/cgroup:/sys/fs/cgroup
     networks:
       - settlement-network
 
 networks:
   settlement-network:
     driver: bridge
+
 volumes:
   config:
   ssh:
