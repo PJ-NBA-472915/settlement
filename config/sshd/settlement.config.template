@@ -1,13 +1,13 @@
 # Custom configuration for the settlement service
 
-Port ${SSH_PORT:-22}
+Port {{SSH_PORT}}
 
 LogLevel INFO
 
 # Authentication:
 PermitRootLogin prohibit-password
 PubkeyAuthentication yes
-AllowUsers admin@${SSH_SUBNET:-192.168.195.*}
+AllowUsers {{SSH_USER}}@{{SSH_SUBNET}}
 
 # To disable tunneled clear text passwords, change to no here!
 PasswordAuthentication no
@@ -30,9 +30,3 @@ UsePAM yes
 X11Forwarding yes
 PermitTTY yes
 PrintMotd no
-
-# Allow client to pass locale environment variables
-AcceptEnv LANG LC_*
-
-# override default of no subsystems
-Subsystem	sftp	/usr/lib/openssh/sftp-server

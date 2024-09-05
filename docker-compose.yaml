@@ -5,25 +5,36 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - SSH_PORT=${SSH_PORT}
+        - SSH_USER=${SSH_USER}
+        - SSH_SUBNET=${SSH_SUBNET}
     restart: always
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
     devices:
       - /dev/net/tun
-    env_file:
-      - .env
+    environment:
+      - SSH_PORT=${SSH_PORT}
+      - SSH_USER=${SSH_USER}
+      - SSH_SUBNET=${SSH_SUBNET}
+      - ZT_NETWORK_ID=${ZT_NETWORK_ID}
     ports:
       - "${SSH_PORT}:${SSH_PORT}"
       - "2375:2375"
+    privileged: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - .docker/zero-tier:/var/lib/zerotier-one
-      - .docker/ssh:/home/admin/.ssh
-      - .docker/etc/ssh:/etc/ssh
+      - ssh:/home/admin/.ssh
+      - config:/etc/ssh
     networks:
       - settlement-network
 
 networks:
   settlement-network:
     driver: bridge
+volumes:
+  config:
+  ssh:
